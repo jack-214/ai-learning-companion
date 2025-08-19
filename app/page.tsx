@@ -1,12 +1,47 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+import CompanionCard from "@/components/CompanionCard";
+import CompanionsList from "@/components/CompanionsList";
+import CTA from "@/components/CTA";
+import { recentSessions } from "@/constants";
 
 const Page = () => {
   return (
-    <div>
-      <h1 className="text-2xl underline">Welcome to my SaaS App</h1>
-      <Button>Let&apos;s get started</Button>
-    </div>
+    <main>
+      <h1>Popular Companions</h1>
+      <section className="flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center">
+        <CompanionCard
+          id="123"
+          name="Neura the brainy Explorer"
+          topic="Neural Network of the Brain"
+          subject="science"
+          duration={45}
+          color="#ffda6e"
+        />
+        <CompanionCard
+          id="456"
+          name="Countsy the Number Wizard"
+          topic="Derivatives & Integrals"
+          subject="Maths"
+          duration={30}
+          color="#e5d0ff"
+        />
+        <CompanionCard
+          id="789"
+          name="Verba the Vocabulary Builder"
+          topic="languae learning"
+          subject="English Literature"
+          duration={30}
+          color="#bde7ff"
+        />
+      </section>
+      <section className="flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center">
+        <CompanionsList
+          classNames="w-2/3 max-lg:w-full"
+          title="Recently completed sessions"
+          companions={recentSessions}
+        />
+        <CTA />
+      </section>
+    </main>
   );
 };
 
