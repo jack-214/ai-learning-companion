@@ -27,7 +27,7 @@ const Page = () => {
         <CompanionCard
           id="789"
           name="Verba the Vocabulary Builder"
-          topic="languae learning"
+          topic="language learning"
           subject="English Literature"
           duration={30}
           color="#bde7ff"
