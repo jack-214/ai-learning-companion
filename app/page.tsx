@@ -1,43 +1,34 @@
 import CompanionCard from "@/components/CompanionCard";
-import CompanionsList from "@/components/CompanionsList";
+import SessionsList from "@/components/SessionsList";
 import CTA from "@/components/CTA";
 import { recentSessions } from "@/constants";
+import {
+  getAllCompanions,
+  getRecentSessions,
+} from "@/lib/actions/companions.actions";
+import { getSubjectColor } from "@/lib/utils";
 
-const Page = () => {
+const Page = async () => {
+  const companions = await getAllCompanions({ limit: 3 });
+  const recentSessions = await getRecentSessions(10);
+
   return (
     <main>
       <h1>Popular Companions</h1>
-      <section className="flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center">
-        <CompanionCard
-          id="123"
-          name="Neura the brainy Explorer"
-          topic="Neural Network of the Brain"
-          subject="science"
-          duration={45}
-          color="#ffda6e"
-        />
-        <CompanionCard
-          id="456"
-          name="Countsy the Number Wizard"
-          topic="Derivatives & Integrals"
-          subject="Maths"
-          duration={30}
-          color="#e5d0ff"
-        />
-        <CompanionCard
-          id="789"
-          name="Verba the Vocabulary Builder"
-          topic="language learning"
-          subject="English Literature"
-          duration={30}
-          color="#bde7ff"
-        />
+      <section className="flex gap-4 justify-start items-start w-full max-lg:flex-col-reverse max-lg:items-center">
+        {companions.map((companion) => (
+          <CompanionCard
+            key={companion.id}
+            {...companion}
+            color={getSubjectColor(companion.subject)}
+          />
+        ))}
       </section>
       <section className="flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center">
-        <CompanionsList
+        <SessionsList
           classNames="w-2/3 max-lg:w-full"
           title="Recently completed sessions"
-          companions={recentSessions}
+          sessions={recentSessions}
         />
         <CTA />
       </section>
