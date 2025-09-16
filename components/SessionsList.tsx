@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { getSubjectColor } from "@/lib/utils";
+import { date } from "zod";
 
 interface SessionsListProps {
   title: string;
@@ -26,13 +27,14 @@ const SessionsList = ({ title, sessions, classNames }: SessionsListProps) => {
         classNames
       )}
     >
-      <h2 className="font-bold text-3xl">Recent Sessions</h2>
+      <h2 className="font-bold text-3xl">{title}</h2>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="text-lg w-2/3">Lessons</TableHead>
             <TableHead className="text-lg">Subject</TableHead>
             <TableHead className="text-lg text-right">Duration</TableHead>
+            <TableHead className="text-lg text-left">Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,7 +45,7 @@ const SessionsList = ({ title, sessions, classNames }: SessionsListProps) => {
               topic,
               subject,
               duration,
-              color,
+              created_at,
             } = companions;
             return (
               <TableRow key={session_id}>
@@ -88,6 +90,20 @@ const SessionsList = ({ title, sessions, classNames }: SessionsListProps) => {
                   <div className="flex items-center gap-2 w-full justify-end">
                     <p className="text-2xl">
                       {duration} <span className="max-md:hidden">mins</span>
+                    </p>
+                    <Image
+                      className="md:hidden"
+                      src="/icons/clock.svg"
+                      alt="minutes"
+                      width={14}
+                      height={14}
+                    />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2 w-full justify-end">
+                    <p className="text-2xl">
+                      {new Date(created_at).toDateString()}
                     </p>
                     <Image
                       className="md:hidden"
