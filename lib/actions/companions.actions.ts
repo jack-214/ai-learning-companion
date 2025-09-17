@@ -2,8 +2,9 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseClient } from "../supabase";
+import { revalidatePath } from "next/cache";
 
-export const creatCompanion = async (formData: CreateCompanion) => {
+export const createCompanion = async (formData: CreateCompanion) => {
   const { userId: author } = await auth();
   const supabase = createSupabaseClient();
 
@@ -25,6 +26,8 @@ export const getAllCompanions = async ({
   topic,
 }: GetAllCompanions) => {
   const supabase = createSupabaseClient();
+  const { userId } = await auth();
+
   let query = supabase.from("companions").select();
 
   if (subject && topic) {
@@ -42,6 +45,22 @@ export const getAllCompanions = async ({
   const { data: companions, error } = await query;
 
   if (error) throw new Error(error.message);
+
+  const companionIds = companions.map(({ id }) => id);
+
+  const { data: bookmarkedCompanions } = await supabase
+    .from("bookmarked_companions")
+    .select()
+    .eq("user_id", userId)
+    .in("companion_id", companionIds);
+
+  const marks = new Set(
+    bookmarkedCompanions?.map(({ companion_id }) => companion_id)
+  );
+
+  companions.forEach((companion) => {
+    companion.bookmarked = marks.has(companion.id);
+  });
 
   return companions;
 };
@@ -108,4 +127,77 @@ export const getUserCompanions = async (userId: string) => {
   if (error) throw new Error(error.message);
 
   return data;
+};
+
+export const newCompanionPermissions = async () => {
+  const { userId, has } = await auth();
+  const supabase = createSupabaseClient();
+
+  let limit = 0;
+
+  if (has({ plan: "pro" })) {
+    return true;
+  } else if (has({ feature: "3_companion_limit" })) {
+    limit = 3;
+  } else if (has({ feature: "10_companion_limit" })) {
+    limit = 10;
+  }
+
+  const { data, error } = await supabase
+    .from("companions")
+    .select("id", { count: "exact" })
+    .eq("author", userId);
+
+  if (error) throw new Error(error.message);
+
+  const companionCount = data?.length;
+
+  if (companionCount >= limit) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const addBookmark = async (companionId: string, path: string) => {
+  const { userId } = await auth();
+  if (!userId) return;
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase.from("bookmarked_companions").insert({
+    companion_id: companionId,
+    user_id: userId,
+  });
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(path);
+  return data;
+};
+
+export const removeBookmark = async (companionId: string, path: string) => {
+  const { userId } = await auth();
+  if (!userId) return;
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from("bookmarked_companions")
+    .delete()
+    .eq("companion_id", companionId)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(path);
+  return data;
+};
+
+export const getBookmarkedCompanions = async (userId: string) => {
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from("bookmarked_companions")
+    .select("companions: companion_id (*)")
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+
+  return data?.map(({ companions }) => companions);
 };

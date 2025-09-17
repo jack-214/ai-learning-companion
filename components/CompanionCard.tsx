@@ -1,5 +1,8 @@
+"use client";
+import { addBookmark, removeBookmark } from "@/lib/actions/companions.actions";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface CompanionCardProps {
   id: string;
@@ -8,6 +11,7 @@ interface CompanionCardProps {
   subject: string;
   duration: number;
   color: string;
+  bookmarked: boolean;
 }
 
 const CompanionCard = ({
@@ -17,7 +21,18 @@ const CompanionCard = ({
   subject,
   duration,
   color,
+  bookmarked,
 }: CompanionCardProps) => {
+  const pathname = usePathname();
+
+  const handleBookmark = async () => {
+    if (bookmarked) {
+      await removeBookmark(id, pathname);
+    } else {
+      await addBookmark(id, pathname);
+    }
+  };
+
   return (
     <article
       className="flex flex-col rounded-4xl border border-black p-4 gap-5 w-full min-lg:max-w-[410px] justify-between"
@@ -27,9 +42,16 @@ const CompanionCard = ({
         <div className="bg-black text-white rounded-4xl text-sm px-2 py-1 capitalize">
           {subject}
         </div>
-        <button className="px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer">
+        <button
+          className="px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer"
+          onClick={handleBookmark}
+          type="button"
+          title="Bookmark Button"
+        >
           <Image
-            src="/icons/bookmark.svg"
+            src={
+              bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"
+            }
             alt="bookmark"
             width={12.5}
             height={15}
@@ -47,10 +69,11 @@ const CompanionCard = ({
         />
         <p className="text-sm">{duration} minutes</p>
       </div>
-      <Link className="w-full" href={`/companions/${id}`}>
-        <button className=" bg-primary text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2 w-full justify-center">
-          Launch Lession
-        </button>
+      <Link
+        className="w-full bg-primary text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2 justify-center"
+        href={`/companions/${id}`}
+      >
+        Launch Lesson
       </Link>
     </article>
   );
