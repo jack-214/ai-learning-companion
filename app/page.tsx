@@ -1,7 +1,6 @@
 import CompanionCard from "@/components/CompanionCard";
 import SessionsList from "@/components/SessionsList";
 import CTA from "@/components/CTA";
-import { recentSessions } from "@/constants";
 import {
   getAllCompanions,
   getRecentSessions,
