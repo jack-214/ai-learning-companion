@@ -90,7 +90,7 @@ const CompanionComponent = ({
       serverMessages: [],
     };
 
-    // @ts-expect-error
+    // @ts-expect-error: Next.js 13 dynamic server component
     vapi.start(configureAssistant(voice, style), assistantOverrides);
   };
 
