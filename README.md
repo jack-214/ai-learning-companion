@@ -1,4 +1,6 @@
-# ![Logo](/public/images/logo.svg) Lumo - AI Learning Companion
+## ![Logo](/public/images/logo.svg)
+
+# Lumo - AI Learning Companion
 
 A real-time AI teaching platform that provides personalized learning experiences through interactive companions and sessions.
 
