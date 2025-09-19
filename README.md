@@ -16,7 +16,7 @@ A real-time AI teaching platform that provides personalized learning experiences
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS, Radix UI components
+- **Styling**: Tailwind CSS, shadcn UI components
 - **Authentication**: Clerk
 - **Database**: Supabase
 - **AI/Voice**: Vapi.ai
